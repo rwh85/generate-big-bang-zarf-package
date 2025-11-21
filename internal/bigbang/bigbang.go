@@ -17,8 +17,8 @@ import (
 
 	"encoding/base64"
 
-	"github.com/defenseunicorns-partnerships/generate-big-bang-zarf-package/internal/helm"
-	"github.com/defenseunicorns-partnerships/generate-big-bang-zarf-package/internal/kustomize"
+	"github.com/rwh85/generate-big-bang-zarf-package/internal/helm"
+	"github.com/rwh85/generate-big-bang-zarf-package/internal/kustomize"
 	"github.com/google/uuid"
 
 	"github.com/Masterminds/semver/v3"
