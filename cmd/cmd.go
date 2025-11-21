@@ -47,4 +47,5 @@ func init() {
 	// Instead Kube version is set very high by default so we always met the chart minimum version requirements
 	// There is an option to override in case big bang ever adds a maximum version requirement
 	rootCmd.Flags().StringVar(&bbOpts.KubeVersion, "kube-version", "1.99.0", "Override the default KubeVersion used during the helm template portion of generate")
+	rootCmd.Flags().StringVar(&bbOpts.RegistryUsername, "registry-username", "zarf-pull", "Username for registry authentication in the zarf-credentials secret")
 }

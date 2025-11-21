@@ -45,6 +45,7 @@ type Opts struct {
 	Version             string
 	BaseDir             string
 	KubeVersion         string
+	RegistryUsername    string
 }
 
 const (
@@ -239,7 +240,7 @@ func Create(ctx context.Context, bbOpts Opts) error {
 		return err
 	}
 
-	manifest, err := createBBManifests(ctx, bbOpts.Airgap, manifestDir, bbOpts.ValuesFileManifests, bbOpts.Version, bbOpts.Repo)
+	manifest, err := createBBManifests(ctx, bbOpts.Airgap, manifestDir, bbOpts.ValuesFileManifests, bbOpts.Version, bbOpts.Repo, bbOpts.RegistryUsername)
 	if err != nil {
 		return err
 	}
@@ -427,7 +428,7 @@ func findBBResources(t string) (map[string]string, []helmReleaseDependency, map[
 }
 
 // createBBManifests creates the manifests component for deploying Big Bang.
-func createBBManifests(ctx context.Context, airgap bool, manifestDir string, valuesFiles []string, version string, repo string) (v1alpha1.ZarfManifest, error) {
+func createBBManifests(ctx context.Context, airgap bool, manifestDir string, valuesFiles []string, version string, repo string, registryUsername string) (v1alpha1.ZarfManifest, error) {
 	// Create a manifest component that we add to the zarf package for bigbang.
 	manifest := v1alpha1.ZarfManifest{
 		Name:      bb,
@@ -443,7 +444,7 @@ func createBBManifests(ctx context.Context, airgap bool, manifestDir string, val
 	var hrValues []fluxHelmCtrl.ValuesReference
 	// Only include the zarf-credentials secret if in airgap mode
 	if airgap {
-		credsSecret, err := manifestZarfCredentials(version)
+		credsSecret, err := manifestZarfCredentials(version, registryUsername)
 		if err != nil {
 			return v1alpha1.ZarfManifest{}, err
 		}

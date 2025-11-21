@@ -5,6 +5,8 @@
 package bigbang
 
 import (
+	"strings"
+
 	"github.com/Masterminds/semver/v3"
 )
 
@@ -17,7 +19,7 @@ stringData:
   values.yaml: |
     registryCredentials:
       registry: "###ZARF_REGISTRY###"
-      username: "zarf-pull"
+      username: "###REGISTRY_USERNAME###"
       password: "###ZARF_REGISTRY_AUTH_PULL###"
     git:
       existingSecret: "private-git-server"	# -- Chart created secrets with user defined values
@@ -43,7 +45,7 @@ stringData:
   values.yaml: |
     registryCredentials:
       registry: "###ZARF_REGISTRY###"
-      username: "zarf-pull"
+      username: "###REGISTRY_USERNAME###"
       password: "###ZARF_REGISTRY_AUTH_PULL###"
     git:
       existingSecret: "private-git-server"	# -- Chart created secrets with user defined values
@@ -59,13 +61,17 @@ stringData:
             - zarf # don't have Kyverno prevent Zarf from doing zarf things
 `
 
-func manifestZarfCredentials(version string) (string, error) {
+func manifestZarfCredentials(version string, registryUsername string) (string, error) {
 	semverVersion, err := semver.NewVersion(version)
 	if err != nil {
 		return "", err
 	}
+	var template string
 	if semverVersion.Major() == 2 {
-		return bbV2ZarfCredentialsValues, nil
+		template = bbV2ZarfCredentialsValues
+	} else {
+		template = bbV1ZarfCredentialsValues
 	}
-	return bbV1ZarfCredentialsValues, nil
+	// Replace the registry username placeholder with the actual value
+	return strings.ReplaceAll(template, "###REGISTRY_USERNAME###", registryUsername), nil
 }
